@@ -26,22 +26,22 @@ IMAGES, SOUNDS, HITMASKS = {}, {}, {}
 PLAYERS_LIST = (
     # pájaro rojo
     (
-        "data/assets/sprites/redbird-upflap.png",
-        "data/assets/sprites/redbird-midflap.png",
-        "data/assets/sprites/redbird-downflap.png",
+        "data/assets/sprites/redfish-up.png",
+        "data/assets/sprites/redfish-mid.png",
+        "data/assets/sprites/redfish-down.png",
     ),
     # pájaro azul
     (
         # amount by which base can maximum shift to left
-        "data/assets/sprites/bluebird-upflap.png",
-        "data/assets/sprites/bluebird-midflap.png",
-        "data/assets/sprites/bluebird-downflap.png",
+        "data/assets/sprites/bluefish-up.png",
+        "data/assets/sprites/bluefish-mid.png",
+        "data/assets/sprites/bluefish-down.png",
     ),
     # pájaro amarillo
     (
-        "data/assets/sprites/yellowbird-upflap.png",
-        "data/assets/sprites/yellowbird-midflap.png",
-        "data/assets/sprites/yellowbird-downflap.png",
+        "data/assets/sprites/yellowfish-up.png",
+        "data/assets/sprites/yellowfish-mid.png",
+        "data/assets/sprites/yellowfish-down.png",
     ),
 )
 
@@ -52,7 +52,7 @@ BACKGROUNDS_LIST = (
 )
 
 # lista de tuberías
-PIPES_LIST = ("data/assets/sprites/pipe-green.png", "data/assets/sprites/pipe-red.png")
+PIPES_LIST = ("data/assets/sprites/pulpo.png", "data/assets/sprites/cangrejo.png")
 
 # punto de entrada principal del juego
 def main():
@@ -63,7 +63,7 @@ def main():
     global SCREEN, FPSCLOCK, FPS, bot
     #argparse para definir y analizar argumento de linea de comandos
     #  Se crea un objeto ArgumentParser llamado parser
-    parser = argparse.ArgumentParser("flappy.py")
+    parser = argparse.ArgumentParser("fish.py")
     # se define el primer argumento de línea de comandos. Este argumento se llama --fps. 
     parser.add_argument("--fps", type=int, default=60, help="number of frames per second")
     # Aquí se define el segundo argumento de línea de comandos. Este argumento se llama --dump_hitmasks
@@ -79,7 +79,7 @@ def main():
     FPSCLOCK = pygame.time.Clock()
     SCREEN = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT))
     # Se establece el título de la ventana de juego
-    pygame.display.set_caption("Flappy Bird")
+    pygame.display.set_caption("FISH: miranda cesar")
 
     # cargando imágenes de números  en el diccionario IMAGES para mostrar la puntuación
     IMAGES["numbers"] = (
