@@ -17,27 +17,27 @@ bot = Bot()
 SCREENWIDTH = 288
 SCREENHEIGHT = 512
 # cantidad por la cual la base puede desplazarse como máximo a la izquierda
-PIPEGAPSIZE = 100  # espacio entre la parte superior e inferior de la tubería
-BASEY = SCREENHEIGHT * 0.79 #altura de suspenso
+depGAPSIZE = 100  # espacio entre la parte superior e inferior de depredador
+BASEY = SCREENHEIGHT * 0.79 #altura de suspenso entre pescado y mostruo
 # diccionarios de imágenes, sonidos y hitmasks vacios
 IMAGES, SOUNDS, HITMASKS = {}, {}, {}
 
-# lista de todos los posibles jugadores (tupla de 3 posiciones de aleteo)
+# lista de todos los posibles jugadores (tupla de 3 posiciones de nadar)
 PLAYERS_LIST = (
-    # pájaro rojo
+    # pescado rojo
     (
         "data/assets/sprites/redfish-up.png",
         "data/assets/sprites/redfish-mid.png",
         "data/assets/sprites/redfish-down.png",
     ),
-    # pájaro azul
+    # pescado azul
     (
         # amount by which base can maximum shift to left
         "data/assets/sprites/bluefish-up.png",
         "data/assets/sprites/bluefish-mid.png",
         "data/assets/sprites/bluefish-down.png",
     ),
-    # pájaro amarillo
+    # pescado amarillo
     (
         "data/assets/sprites/yellowfish-up.png",
         "data/assets/sprites/yellowfish-mid.png",
@@ -51,8 +51,8 @@ BACKGROUNDS_LIST = (
     "data/assets/sprites/background-night.png",
 )
 
-# lista de tuberías
-PIPES_LIST = ("data/assets/sprites/pulpo.png", "data/assets/sprites/cangrejo.png")
+# lista de depredadores
+DEP_LIST = ("data/assets/sprites/pulpo.png", "data/assets/sprites/cangrejo.png")
 
 # punto de entrada principal del juego
 def main():
@@ -127,15 +127,15 @@ def main():
             pygame.image.load(PLAYERS_LIST[randPlayer][2]).convert_alpha(),
         )
 
-        # seleccionar imágenes de tubería al azar
-        pipeindex = random.randint(0, len(PIPES_LIST) - 1)
-        IMAGES["pipe"] = (
-            pygame.transform.rotate(pygame.image.load(PIPES_LIST[pipeindex]).convert_alpha(), 180),
-            pygame.image.load(PIPES_LIST[pipeindex]).convert_alpha(),
+        # seleccionar imágenes de depredadores al azar
+        depindex = random.randint(0, len(DEP_LIST) - 1)
+        IMAGES["dep"] = (
+            pygame.transform.rotate(pygame.image.load(DEP_LIST[depindex]).convert_alpha(), 180),
+            pygame.image.load(DEP_LIST[depindex]).convert_alpha(),
         )
 
-        # Máscaras de colisión para las tuberías
-        HITMASKS["pipe"] = (getHitmask(IMAGES["pipe"][0]), getHitmask(IMAGES["pipe"][1]))
+        # Máscaras de colisión para las depredadores
+        HITMASKS["dep"] = (getHitmask(IMAGES["dep"][0]), getHitmask(IMAGES["dep"][1]))
 
         # Máscaras de colisión para el jugador
         HITMASKS["player"] = (
@@ -225,23 +225,23 @@ def mainGame(movementInfo):
     basex = movementInfo["basex"]
     baseShift = IMAGES["base"].get_width() - IMAGES["background"].get_width()
 
-    # Obtener 2 nuevos tubos para agregar a la lista upperPipes y lowerPipes
-    newPipe1 = getRandomPipe()
-    newPipe2 = getRandomPipe()
+    # Obtener 2 nuevos tubos para agregar a la lista upperdeps y lowerdeps
+    newdep1 = getRandomdep()
+    newdep2 = getRandomdep()
 
     # Lista de tubos superiores
-    upperPipes = [
-        {"x": SCREENWIDTH + 200, "y": newPipe1[0]["y"]},
-        {"x": SCREENWIDTH + 200 + (SCREENWIDTH / 2), "y": newPipe2[0]["y"]},
+    upperdeps = [
+        {"x": SCREENWIDTH + 200, "y": newdep1[0]["y"]},
+        {"x": SCREENWIDTH + 200 + (SCREENWIDTH / 2), "y": newdep2[0]["y"]},
     ]
 
     # Lista de tubos inferiores
-    lowerPipes = [
-        {"x": SCREENWIDTH + 200, "y": newPipe1[1]["y"]},
-        {"x": SCREENWIDTH + 200 + (SCREENWIDTH / 2), "y": newPipe2[1]["y"]},
+    lowerdeps = [
+        {"x": SCREENWIDTH + 200, "y": newdep1[1]["y"]},
+        {"x": SCREENWIDTH + 200 + (SCREENWIDTH / 2), "y": newdep2[1]["y"]},
     ]
 
-    pipeVelX = -4
+    depVelX = -4
 
     # Velocidad del jugador, velocidad máxima, aceleración hacia abajo, aceleración en el salto
     playerVelY = -9  # velocidad del jugador en el eje Y, por defecto es igual a playerFlapped
@@ -253,10 +253,10 @@ def mainGame(movementInfo):
 
 # Se verifica si el jugador ha superado un par de tubos y se incrementa la puntuación 
     while True:
-        if -playerx + lowerPipes[0]["x"] > -30:
-            myPipe = lowerPipes[0]
+        if -playerx + lowerdeps[0]["x"] > -30:
+            mydep = lowerdeps[0]
         else:
-            myPipe = lowerPipes[1]
+            mydep = lowerdeps[1]
 
         for event in pygame.event.get():
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
@@ -268,7 +268,7 @@ def mainGame(movementInfo):
                     playerFlapped = True
                     SOUNDS["wing"].play()
 
-        if bot.act(-playerx + myPipe["x"], -playery + myPipe["y"], playerVelY):
+        if bot.act(-playerx + mydep["x"], -playery + mydep["y"], playerVelY):
             if playery > -2 * IMAGES["player"][0].get_height():
                 playerVelY = playerFlapAcc
                 playerFlapped = True
@@ -276,7 +276,7 @@ def mainGame(movementInfo):
 
         # Verificar colisión aquí
         crashTest = checkCrash(
-            {"x": playerx, "y": playery, "index": playerIndex}, upperPipes, lowerPipes
+            {"x": playerx, "y": playery, "index": playerIndex}, upperdeps, lowerdeps
         )
         if crashTest[0]:
             # Actualizar las puntuaciones Q
@@ -286,17 +286,17 @@ def mainGame(movementInfo):
                 "y": playery,
                 "groundCrash": crashTest[1],
                 "basex": basex,
-                "upperPipes": upperPipes,
-                "lowerPipes": lowerPipes,
+                "upperdeps": upperdeps,
+                "lowerdeps": lowerdeps,
                 "score": score,
                 "playerVelY": playerVelY,
             }
 
         # Verificar puntuación
         playerMidPos = playerx + IMAGES["player"][0].get_width() / 2
-        for pipe in upperPipes:
-            pipeMidPos = pipe["x"] + IMAGES["pipe"][0].get_width() / 2
-            if pipeMidPos <= playerMidPos < pipeMidPos + 4:
+        for dep in upperdeps:
+            depMidPos = dep["x"] + IMAGES["dep"][0].get_width() / 2
+            if depMidPos <= playerMidPos < depMidPos + 4:
                 score += 1
                 SOUNDS["point"].play()
 
@@ -315,27 +315,27 @@ def mainGame(movementInfo):
         playery += min(playerVelY, BASEY - playery - playerHeight)
 
         # Mover los tubos hacia la izquierda
-        for uPipe, lPipe in zip(upperPipes, lowerPipes):
-            uPipe["x"] += pipeVelX
-            lPipe["x"] += pipeVelX
+        for udep, ldep in zip(upperdeps, lowerdeps):
+            udep["x"] += depVelX
+            ldep["x"] += depVelX
 
         # Agregar nuevo tubo cuando el primer tubo está a punto de tocar la izquierda de la pantalla
-        if 0 < upperPipes[0]["x"] < 5:
-            newPipe = getRandomPipe()
-            upperPipes.append(newPipe[0])
-            lowerPipes.append(newPipe[1])
+        if 0 < upperdeps[0]["x"] < 5:
+            newdep = getRandomdep()
+            upperdeps.append(newdep[0])
+            lowerdeps.append(newdep[1])
 
         # Quitar el primer tubo si está fuera de la pantalla
-        if upperPipes[0]["x"] < -IMAGES["pipe"][0].get_width():
-            upperPipes.pop(0)
-            lowerPipes.pop(0)
+        if upperdeps[0]["x"] < -IMAGES["dep"][0].get_width():
+            upperdeps.pop(0)
+            lowerdeps.pop(0)
 
         # Dibujar los sprites
         SCREEN.blit(IMAGES["background"], (0, 0))
 
-        for uPipe, lPipe in zip(upperPipes, lowerPipes):
-            SCREEN.blit(IMAGES["pipe"][0], (uPipe["x"], uPipe["y"]))
-            SCREEN.blit(IMAGES["pipe"][1], (lPipe["x"], lPipe["y"]))
+        for udep, ldep in zip(upperdeps, lowerdeps):
+            SCREEN.blit(IMAGES["dep"][0], (udep["x"], udep["y"]))
+            SCREEN.blit(IMAGES["dep"][1], (ldep["x"], ldep["y"]))
 
         SCREEN.blit(IMAGES["base"], (basex, BASEY))
         # Mostrar la puntuación para que el jugador se superponga a ella
@@ -358,7 +358,7 @@ def showGameOverScreen(crashInfo):
 
     basex = crashInfo["basex"]
 
-    upperPipes, lowerPipes = crashInfo["upperPipes"], crashInfo["lowerPipes"]
+    upperdeps, lowerdeps = crashInfo["upperdeps"], crashInfo["lowerdeps"]
 
     # Reproducir sonidos de colisión y muerte
     SOUNDS["hit"].play()
@@ -388,9 +388,9 @@ def showGameOverScreen(crashInfo):
         # Dibujar los sprites
         SCREEN.blit(IMAGES["background"], (0, 0))
 
-        for uPipe, lPipe in zip(upperPipes, lowerPipes):
-            SCREEN.blit(IMAGES["pipe"][0], (uPipe["x"], uPipe["y"]))
-            SCREEN.blit(IMAGES["pipe"][1], (lPipe["x"], lPipe["y"]))
+        for udep, ldep in zip(upperdeps, lowerdeps):
+            SCREEN.blit(IMAGES["dep"][0], (udep["x"], udep["y"]))
+            SCREEN.blit(IMAGES["dep"][1], (ldep["x"], ldep["y"]))
 
         SCREEN.blit(IMAGES["base"], (basex, BASEY))
         showScore(score)
@@ -411,17 +411,17 @@ def playerShm(playerShm):
         playerShm["val"] -= 1
 
 
-def getRandomPipe():
+def getRandomdep():
     """Devuelve un tubo generado aleatoriamente"""
     # Altura de la brecha entre el tubo superior e inferior
-    gapY = random.randrange(0, int(BASEY * 0.6 - PIPEGAPSIZE))
+    gapY = random.randrange(0, int(BASEY * 0.6 - depGAPSIZE))
     gapY += int(BASEY * 0.2)
-    pipeHeight = IMAGES["pipe"][0].get_height()
-    pipeX = SCREENWIDTH + 10
+    depHeight = IMAGES["dep"][0].get_height()
+    depX = SCREENWIDTH + 10
 
     return [
-        {"x": pipeX, "y": gapY - pipeHeight},  # upper pipe
-        {"x": pipeX, "y": gapY + PIPEGAPSIZE},  # lower pipe
+        {"x": depX, "y": gapY - depHeight},  # upper dep
+        {"x": depX, "y": gapY + depGAPSIZE},  # lower dep
     ]
 
 
@@ -441,7 +441,7 @@ def showScore(score):
 
 # verificar el bot que hemos chocado
 
-def checkCrash(player, upperPipes, lowerPipes):
+def checkCrash(player, upperdeps, lowerdeps):
     """Devuelve True si el jugador colisiona con el suelo o los tubos."""
     pi = player["index"]
     player["w"] = IMAGES["player"][0].get_width()
@@ -453,22 +453,22 @@ def checkCrash(player, upperPipes, lowerPipes):
     else:
 
         playerRect = pygame.Rect(player["x"], player["y"], player["w"], player["h"])
-        pipeW = IMAGES["pipe"][0].get_width()
-        pipeH = IMAGES["pipe"][0].get_height()
+        depW = IMAGES["dep"][0].get_width()
+        depH = IMAGES["dep"][0].get_height()
 
-        for uPipe, lPipe in zip(upperPipes, lowerPipes):
+        for udep, ldep in zip(upperdeps, lowerdeps):
             # Rectángulos de tubo superior e inferior
-            uPipeRect = pygame.Rect(uPipe["x"], uPipe["y"], pipeW, pipeH)
-            lPipeRect = pygame.Rect(lPipe["x"], lPipe["y"], pipeW, pipeH)
+            udepRect = pygame.Rect(udep["x"], udep["y"], depW, depH)
+            ldepRect = pygame.Rect(ldep["x"], ldep["y"], depW, depH)
 
             # Hitmasks del jugador y los tubos superior/inferior
             pHitMask = HITMASKS["player"][pi]
-            uHitmask = HITMASKS["pipe"][0]
-            lHitmask = HITMASKS["pipe"][1]
+            uHitmask = HITMASKS["dep"][0]
+            lHitmask = HITMASKS["dep"][1]
 
             # Si el pájaro colisiona con el tubo superior o el tubo inferior
-            uCollide = pixelCollision(playerRect, uPipeRect, pHitMask, uHitmask)
-            lCollide = pixelCollision(playerRect, lPipeRect, pHitMask, lHitmask)
+            uCollide = pixelCollision(playerRect, udepRect, pHitMask, uHitmask)
+            lCollide = pixelCollision(playerRect, ldepRect, pHitMask, lHitmask)
 
             if uCollide or lCollide:
                 return [True, False]

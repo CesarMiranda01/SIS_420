@@ -3,7 +3,7 @@
 Integrantes de presentacion-Ingenieria en Ciencias de la Computacion
 -**Miranda Gutierrez Cesar Alvaro**
 ===================
-**SEGUNDO PARCIAL**
+
 Un bot de Flappy Bird en Python que aprende de cada partida a través del Aprendizaje por Refuerzo con Q-Learning.
 
 ----------
