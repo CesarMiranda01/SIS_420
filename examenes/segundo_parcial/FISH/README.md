@@ -1,15 +1,15 @@
  Bot utilizando Aprendizaje por Refuerzo en Python
 ===================
-Integrantes de presentacion-Ingenieria en Ciencias de la Computacion
+-Ingenieria en Ciencias de la Computacion
 -**Miranda Gutierrez Cesar Alvaro**
 ===================
 
-Un bot de Flappy Bird en Python que aprende de cada partida a través del Aprendizaje por Refuerzo con Q-Learning.
+Un bot de Fish en Python que aprende de cada partida a través del Aprendizaje por Refuerzo con Q-Learning.
 
 ----------
 ### Cómo funciona
 
-Con cada partida jugada, el percado observa los estados en los que ha estado y las acciones que tomó. Con respecto a sus resultados, castiga o recompensa los pares estado-acción. Después de jugar el juego numerosas veces, el pescado puede obtener consistentemente puntuaciones altas.
+Con cada partida jugada, el pescado observa los estados en los que ha estado y las acciones que tomó. Con respecto a sus resultados, castiga o recompensa los pares estado-acción. Después de jugar el juego numerosas veces, el pescado puede obtener consistentemente puntuaciones altas.
 
 **Creditos**
 
